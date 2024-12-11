@@ -1,0 +1,11 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/http-server
+- name: Run http-server
+  docker_container:
+    name: http-server
+    image: elliotmv/tp-devops-http-server
+    published_ports:
+      - 80:80
+    networks:
+      - name: network_one
