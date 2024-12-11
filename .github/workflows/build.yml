@@ -45,7 +45,7 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
 
-      - name: Build image and push httpd
+      - name: Build image and push frontend
         uses: docker/build-push-action@v3
         with:
           context: "{{defaultContext}}:front"

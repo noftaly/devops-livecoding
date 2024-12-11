@@ -1,0 +1,43 @@
+name: Deploy with Ansible
+
+on:
+  workflow_run:
+    workflows: ["Build & Push docker image"]
+    types:
+      - completed
+    branches: [main]
+
+jobs:
+  ansible-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Verify Docker Installation
+      run: |
+        docker --version
+
+    - name: Pull Ansible Docker Image
+      run: |
+        docker pull alpine/ansible
+
+    - name: Inject SSH Private Key
+      run: |
+        mkdir -p $HOME/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa
+        chmod 600 $HOME/.ssh/id_rsa
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Run Ansible Playbook
+      run: |
+        docker run --rm \
+          -v "$PWD/ansible":/ansible \
+          -v "$HOME/.ssh":/root/.ssh \
+          alpine/ansible \
+          /bin/bash -c "export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook -i ansible/inventories/setup.yml ansible/playbook.yml"
+
+    - name: Clean Up SSH Key
+      run: rm -f ~/.ssh/id_rsa
