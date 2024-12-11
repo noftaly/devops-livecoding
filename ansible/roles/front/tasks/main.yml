@@ -1,10 +1,10 @@
 #SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/database
-- name: Run Database
+# tasks file for roles/front
+- name: Run front
   docker_container:
-    name: my-db
-    image: elliotmv/tp-devops-database
+    name: front
+    image: elliotmv/tp-devops-front
     pull: always
     networks:
       - name: network_one

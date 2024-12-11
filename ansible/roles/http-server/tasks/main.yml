@@ -5,6 +5,7 @@
   docker_container:
     name: http-server
     image: elliotmv/tp-devops-http-server
+    pull: always
     published_ports:
       - 80:80
     networks:
